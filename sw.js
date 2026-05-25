@@ -1,4 +1,4 @@
-const CACHE_NAME = 'levelup-v2';
+const CACHE_NAME = 'levelup-v4';
 const ASSETS = [
   './index.html',
   './css/main.css',
@@ -12,16 +12,31 @@ const ASSETS = [
   './js/modules/science.js',
   './js/modules/coloring.js',
   './js/views/auth-view.js',
-  './data/vocab-fr.js',
-  './data/vocab-en.js',
+  './data/words-fr.js',
+  './data/words-en.js',
   './data/grammar-fr.js',
   './data/grammar-en.js',
   './data/science-fr.js'
 ];
 
 self.addEventListener('install', (event) => {
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
+  );
+});
+
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    caches.keys().then((cacheNames) => {
+      return Promise.all(
+        cacheNames.map((cache) => {
+          if (cache !== CACHE_NAME) {
+            return caches.delete(cache);
+          }
+        })
+      );
+    })
   );
 });
 
