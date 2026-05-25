@@ -7,13 +7,19 @@ window.ScienceAcademy = {
     init() {
         // Initialization if needed
     },
+    
+    reset() {
+        document.getElementById('science-start-area').classList.remove('hidden');
+        document.getElementById('science-game-area').classList.add('hidden');
+    },
 
     startSession() {
         this.currentDifficulty = 'beginner';
         this.consecutiveCorrect = 0;
         this.isWaitingForContinue = false;
         
-        App.navigate('science');
+        document.getElementById('science-start-area').classList.add('hidden');
+        document.getElementById('science-game-area').classList.remove('hidden');
         
         SessionManager.startSession('science');
         this.nextQuestion();

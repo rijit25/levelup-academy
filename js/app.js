@@ -126,9 +126,7 @@ const App = {
                 document.getElementById('lang-en-grammar').classList.add('hidden');
                 break;
             case 'science':
-                if (window.ScienceAcademy && !SessionManager.isActive) {
-                    ScienceAcademy.startSession();
-                }
+                if (window.ScienceAcademy) ScienceAcademy.reset();
                 break;
             case 'coloring':
                 if (window.ColoringZone) {

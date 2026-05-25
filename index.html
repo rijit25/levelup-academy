@@ -312,22 +312,30 @@
             <section id="view-science" class="view">
                 <div class="text-center">
                     <h2 class="mb-1" style="color: #009688;">Culture Générale 🌍</h2>
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                        <span id="science-diff" class="diff-badge">BEGINNER</span>
-                        <span id="science-streak-text" style="font-size: 0.8rem; font-weight: bold; color: var(--text-muted);">0/5 vers le niveau suivant</span>
-                    </div>
-                    <p style="color: var(--text-muted); margin-bottom: 10px;">Question :</p>
-                    <div id="science-q" style="font-size: 1.5rem; font-weight: 800; margin-bottom: 20px; color: var(--text-main);">
-                        Question
-                    </div>
-                    <div id="science-options" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;"></div>
                     
-                    <div id="science-explanation-box" class="hidden explanation-box">
-                        <h4 style="margin-bottom: 10px;">💡 Explication</h4>
-                        <p id="science-exp-fr" style="margin-bottom: 8px; font-weight: bold;"></p>
-                        <p id="science-exp-ar" style="font-size: 1.1rem; color: #555; text-align: right;" dir="rtl"></p>
+                    <div id="science-start-area">
+                        <p class="mb-3" style="color: var(--text-muted);">Teste tes connaissances en SVT et Géo !</p>
+                        <button onclick="ScienceAcademy.startSession()" class="btn btn-primary btn-large w-100" style="padding: 20px; font-size: 1.5rem;">C'EST PARTI !</button>
                     </div>
-                    <button id="science-btn-continue" class="btn btn-primary w-100 hidden" style="margin-top: 15px;">Continuer ➡️</button>
+
+                    <div id="science-game-area" class="hidden">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                            <span id="science-diff" class="diff-badge">BEGINNER</span>
+                            <span id="science-streak-text" style="font-size: 0.8rem; font-weight: bold; color: var(--text-muted);">0/5 vers le niveau suivant</span>
+                        </div>
+                        <p style="color: var(--text-muted); margin-bottom: 10px;">Question :</p>
+                        <div id="science-q" style="font-size: 1.5rem; font-weight: 800; margin-bottom: 20px; color: var(--text-main);">
+                            Question
+                        </div>
+                        <div id="science-options" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;"></div>
+                        
+                        <div id="science-explanation-box" class="hidden explanation-box">
+                            <h4 style="margin-bottom: 10px;">💡 Explication</h4>
+                            <p id="science-exp-fr" style="margin-bottom: 8px; font-weight: bold;"></p>
+                            <p id="science-exp-ar" style="font-size: 1.1rem; color: #555; text-align: right;" dir="rtl"></p>
+                        </div>
+                        <button id="science-btn-continue" class="btn btn-primary w-100 hidden" style="margin-top: 15px;">Continuer ➡️</button>
+                    </div>
                 </div>
             </section>
 
