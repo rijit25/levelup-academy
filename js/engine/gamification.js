@@ -57,7 +57,9 @@ window.Gamification = {
             FirebaseService.saveUserData(App.state.currentUser.uid, App.state.userData);
         } else {
             // Fallback to local storage for offline/testing
-            localStorage.setItem('lu_userData', JSON.stringify(App.state.userData));
+            try {
+                localStorage.setItem('lu_userData', JSON.stringify(App.state.userData));
+            } catch(e) { console.warn('LocalStorage blocked', e); }
         }
     },
 

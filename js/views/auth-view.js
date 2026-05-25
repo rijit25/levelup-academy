@@ -53,7 +53,9 @@ window.AuthView = {
 
             // Mock Auth for now (Firebase integration point)
             App.state.currentUser = { uid: "user_123", email: email };
-            localStorage.setItem('levelup_user', JSON.stringify(App.state.currentUser));
+            try {
+                localStorage.setItem('levelup_user', JSON.stringify(App.state.currentUser));
+            } catch(e) { console.warn('LocalStorage blocked', e); }
             Gamification.loadLocalState();
             
             App.navigate('dashboard');
@@ -64,7 +66,9 @@ window.AuthView = {
         // Guest Mode
         btnGuest.addEventListener('click', () => {
             App.state.currentUser = { uid: "guest", email: "Invité" };
-            localStorage.setItem('levelup_user', JSON.stringify(App.state.currentUser));
+            try {
+                localStorage.setItem('levelup_user', JSON.stringify(App.state.currentUser));
+            } catch(e) { console.warn('LocalStorage blocked', e); }
             Gamification.loadLocalState();
             App.navigate('dashboard');
             App.updateTopBar();
