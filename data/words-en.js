@@ -1,0 +1,22 @@
+window.wordsEn = [
+    { word: "School", translation: "Madrassa / École", category: "school" },
+    { word: "Teacher", translation: "Oustad / Professeur", category: "school" },
+    { word: "Book", translation: "Ktab / Livre", category: "school" },
+    { word: "Notebook", translation: "Daftar / Cahier", category: "school" },
+    { word: "Pen", translation: "Stylo", category: "school" },
+    { word: "To eat", translation: "Manger / Yakoul", category: "verbs" },
+    { word: "To sleep", translation: "Dormir / Ynaas", category: "verbs" },
+    { word: "To play", translation: "Jouer / Ylaab", category: "verbs" },
+    { word: "To study", translation: "Étudier / Ykra", category: "verbs" },
+    { word: "Family", translation: "Famille", category: "family" },
+    { word: "Mother", translation: "Mère / Oum", category: "family" },
+    { word: "Father", translation: "Père / Ab", category: "family" },
+    { word: "Brother", translation: "Frère / Khouya", category: "family" },
+    { word: "Sister", translation: "Soeur / Khti", category: "family" },
+    { word: "Happy", translation: "Heureux / Farhan", category: "emotions" },
+    { word: "Sad", translation: "Triste / Hzin", category: "emotions" },
+    { word: "Hungry", translation: "Affamé / Ji'aan", category: "emotions" },
+    { word: "Internet", translation: "Internet", category: "tech" },
+    { word: "Computer", translation: "Ordinateur / PC", category: "tech" },
+    { word: "Phone", translation: "Téléphone", category: "tech" }
+];

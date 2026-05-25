@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>LevelUp Academy</title>
+    
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/main.css">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <link rel="manifest" href="./manifest.json">
+    
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+    <div id="app-container">
+        
+        <header id="top-bar" class="hidden">
+            <div class="user-stats">
+                <div class="stat-badge streak" title="Streak">
+                    <span class="icon">🔥</span>
+                    <span id="streak-count">0</span>
+                </div>
+                <div class="stat-badge coins" title="Coins">
+                    <span class="icon">💎</span>
+                    <span id="coin-count">0</span>
+                </div>
+                <div class="stat-badge xp" title="XP">
+                    <span class="icon">⭐</span>
+                    <span id="xp-count">0</span>
+                </div>
+            </div>
+            <button id="profile-btn" class="icon-btn">👤</button>
+        </header>
+
+        <!-- Global Session Timer (Hidden by default) -->
+        <div id="global-timer-container" class="hidden">
+            <div id="global-timer-bar-container">
+                <div id="global-timer-bar"></div>
+            </div>
+            <div id="global-timer-text">5:00</div>
+        </div>
+
+        <main id="main-content">
+            <!-- Loading View -->
+            <section id="view-loading" class="view active">
+                <div class="loader-container">
+                    <div class="loader"></div>
+                    <p>Chargement...</p>
+                </div>
+            </section>
+
+            <!-- Auth / Landing View -->
+            <section id="view-auth" class="view auth-bg">
+                <div class="auth-content">
+                    <div class="auth-header">
+                        <div class="logo-icon">🚀</div>
+                        <h1 class="game-title">LevelUp<br><span>Academy</span></h1>
+                        <p class="game-subtitle">Apprends en t'amusant !</p>
+                    </div>
+                    
+                    <!-- Choix de l'aventure -->
+                    <div id="auth-choice-container">
+                        <button id="auth-btn-register" class="btn btn-primary btn-large btn-adventure w-100 mb-2">
+                            <span style="font-size: 1.2rem;">🌟 S'INSCRIRE</span>
+                            <span style="font-size: 0.8rem; opacity: 0.9; font-weight: 600;">Sauvegarde ta progression en ligne</span>
+                        </button>
+                        
+                        <button id="auth-guest-btn" class="btn btn-secondary btn-large btn-adventure w-100 mb-3">
+                            <span style="font-size: 1.2rem;">🕹️ JOUER EN INVITÉ</span>
+                            <span style="font-size: 0.8rem; opacity: 0.9; font-weight: 600;">Test direct sans sauvegarde</span>
+                        </button>
+
+                        <p style="text-align: center; color: white; margin-top: 20px;">
+                            <span id="auth-toggle-login-btn" style="text-decoration: underline; cursor: pointer; font-weight: 700;">Déjà un héros ? Se connecter</span>
+                        </p>
+                    </div>
+
+                    <!-- Formulaire (Glassmorphism), caché par défaut -->
+                    <div id="auth-form-container" class="glass-form hidden">
+                        <h2 id="auth-title" class="mb-2" style="color: white; text-align: center;">Créer un compte</h2>
+                        <input type="email" id="auth-email" placeholder="Ton Email" class="mb-2 glass-input">
+                        <input type="password" id="auth-password" placeholder="Mot de passe secret" class="mb-2 glass-input">
+                        <button id="auth-submit-btn" class="btn btn-primary w-100 mb-2">C'EST PARTI !</button>
+                        <p style="text-align: center; margin-top: 15px;">
+                            <span id="auth-back-btn" style="color: white; text-decoration: underline; cursor: pointer; font-weight: bold;">Retour</span>
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Dashboard View -->
+            <section id="view-dashboard" class="view">
+                
+                <div class="profile-card mb-3">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <h2 style="color: white; margin: 0;">Salut <span id="dash-username">Joueur</span> ! 👋</h2>
+                        <div style="background: rgba(255,255,255,0.2); padding: 5px 10px; border-radius: 10px; color: white; font-weight: bold;">
+                            Niv. <span id="dash-level">1</span>
+                        </div>
+                    </div>
+                    
+                    <div style="background: rgba(0,0,0,0.2); height: 15px; border-radius: 10px; overflow: hidden; margin-bottom: 5px;">
+                        <div id="dash-xp-bar" style="background: var(--accent-color); height: 100%; width: 0%; transition: width 0.3s;"></div>
+                    </div>
+                    <p style="text-align: right; font-size: 0.85rem; font-weight: bold; color: rgba(255,255,255,0.9);">
+                        <span id="dash-xp-text">0</span> / 100 XP
+                    </p>
+                </div>
+
+                <h3 class="mb-2" style="color: var(--text-main);">Ton Entraînement 🎯</h3>
+                
+                <div class="hub-grid mb-3">
+                    <div class="hub-card bg-math" onclick="App.navigate('math')">
+                        <div class="hub-icon">🧮</div>
+                        <h4>Math Arena</h4>
+                        <p>Calcul mental express</p>
+                    </div>
+                    
+                    <div class="hub-card bg-french" onclick="App.navigate('french')">
+                        <div class="hub-icon">🥖</div>
+                        <h4>Français</h4>
+                        <p>Conjugaison & Vocabulaire</p>
+                    </div>
+                    
+                    <div class="hub-card bg-english" onclick="App.navigate('english')">
+                        <div class="hub-icon">🗽</div>
+                        <h4>English</h4>
+                        <p>Grammar & Vocabulary</p>
+                    </div>
+
+                    <div class="hub-card bg-science" onclick="ScienceAcademy.startSession()">
+                        <div class="hub-icon">🌍</div>
+                        <h4>Culture Générale</h4>
+                        <p>Sciences & Géographie</p>
+                    </div>
+                    
+                    <div class="hub-card bg-coloring" onclick="ColoringZone.start()">
+                        <div class="hub-icon">🎨</div>
+                        <h4>Zone Zen</h4>
+                        <p>Coloriage relaxant</p>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <h4>💡 Comment ça marche ?</h4>
+                    <p>1. Choisis une matière ci-dessus.</p>
+                    <p>2. Joue 5 minutes chaque jour.</p>
+                    <p>3. Gagne des XP (⭐) pour monter de niveau et augmente ta série de feu (🔥) !</p>
+                </div>
+
+            </section>
+
+            <!-- Math Arena View -->
+            <section id="view-math" class="view">
+                <div class="text-center">
+                    <h2 class="mb-1" style="color: var(--danger-color);">Math Arena 🧮</h2>
+                    <p class="mb-3" style="color: var(--text-muted);">Réponds vite avant le monstre !</p>
+                    
+                    <div id="math-game-area" class="hidden">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                            <div style="font-size: 1.5rem; font-weight: bold; color: var(--danger-color);">⏱ <span id="math-timer">10</span>s</div>
+                            <div style="font-size: 1.2rem; font-weight: bold; color: #ff9600;">Combo x<span id="math-combo">0</span></div>
+                        </div>
+                        
+                        <div id="math-question" style="font-size: 3.5rem; font-weight: 900; margin: 30px 0;">
+                            5 x 4
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;" id="math-options">
+                            <button class="btn btn-secondary math-option">10</button>
+                            <button class="btn btn-secondary math-option">20</button>
+                            <button class="btn btn-secondary math-option">25</button>
+                            <button class="btn btn-secondary math-option">9</button>
+                        </div>
+                    </div>
+
+                    <div id="math-start-area">
+                        <button id="math-start-btn" class="btn btn-danger btn-large w-100" style="padding: 20px; font-size: 1.5rem;">START BATTLE!</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- French View -->
+            <section id="view-french" class="view">
+                <div class="text-center">
+                    <h2 class="mb-1" style="color: var(--secondary-color);">Académie de Français 🥖</h2>
+                    
+                    <div id="lang-fr-start">
+                        <p class="mb-3" style="color: var(--text-muted);">Choisis ton entraînement :</p>
+                        <button onclick="startLanguageSession('fr')" class="btn btn-secondary w-100 mb-2" style="padding: 15px;">📖 Vocabulaire</button>
+                        <button onclick="startGrammarSession('fr')" class="btn btn-primary w-100" style="padding: 15px;">✍️ Conjugaison (5 min)</button>
+                    </div>
+
+                    <div id="lang-fr-game" class="hidden">
+                        <p style="color: var(--text-muted); margin-bottom: 20px;">Que signifie :</p>
+                        <div id="lang-fr-word" style="font-size: 2.5rem; font-weight: 900; margin-bottom: 30px; color: var(--text-main);">
+                            Mot
+                        </div>
+                        <div id="lang-fr-options" style="display: grid; grid-template-columns: 1fr; gap: 10px;"></div>
+                    </div>
+
+                    <div id="lang-fr-grammar" class="hidden">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                            <span id="lang-fr-grammar-diff" class="diff-badge">BEGINNER</span>
+                            <span id="lang-fr-streak-text" style="font-size: 0.8rem; font-weight: bold; color: var(--text-muted);">0/5 vers le niveau suivant</span>
+                        </div>
+                        <p style="color: var(--text-muted); margin-bottom: 10px;">Complète la phrase :</p>
+                        <div id="lang-fr-grammar-q" style="font-size: 1.5rem; font-weight: 800; margin-bottom: 20px; color: var(--text-main);">
+                            Question
+                        </div>
+                        <div id="lang-fr-grammar-options" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;"></div>
+                        
+                        <div id="lang-fr-explanation-box" class="hidden explanation-box">
+                            <h4 style="margin-bottom: 10px;">💡 Explication</h4>
+                            <p id="lang-fr-exp-fr" style="margin-bottom: 8px; font-weight: bold;"></p>
+                            <p id="lang-fr-exp-ar" style="font-size: 1.1rem; color: #555; text-align: right;" dir="rtl"></p>
+                        </div>
+                        <button id="lang-fr-btn-continue" class="btn btn-primary w-100 hidden" style="margin-top: 15px;">Continuer ➡️</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- English View -->
+            <section id="view-english" class="view">
+                <div class="text-center">
+                    <h2 class="mb-1" style="color: var(--primary-color);">English Academy 🗽</h2>
+                    
+                    <div id="lang-en-start">
+                        <p class="mb-3" style="color: var(--text-muted);">Choose your training:</p>
+                        <button onclick="startLanguageSession('en')" class="btn btn-secondary w-100 mb-2" style="padding: 15px;">📖 Vocabulary</button>
+                        <button onclick="startGrammarSession('en')" class="btn btn-primary w-100" style="padding: 15px;">✍️ Grammar (5 min)</button>
+                    </div>
+
+                    <div id="lang-en-game" class="hidden">
+                        <p style="color: var(--text-muted); margin-bottom: 20px;">Translate:</p>
+                        <div id="lang-en-word" style="font-size: 2.5rem; font-weight: 900; margin-bottom: 30px; color: var(--text-main);">
+                            Word
+                        </div>
+                        <div id="lang-en-options" style="display: grid; grid-template-columns: 1fr; gap: 10px;"></div>
+                    </div>
+
+                    <div id="lang-en-grammar" class="hidden">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                            <span id="lang-en-grammar-diff" class="diff-badge">BEGINNER</span>
+                            <span id="lang-en-streak-text" style="font-size: 0.8rem; font-weight: bold; color: var(--text-muted);">0/5 vers le niveau suivant</span>
+                        </div>
+                        <p style="color: var(--text-muted); margin-bottom: 10px;">Fill in the blank:</p>
+                        <div id="lang-en-grammar-q" style="font-size: 1.5rem; font-weight: 800; margin-bottom: 20px; color: var(--text-main);">
+                            Question
+                        </div>
+                        <div id="lang-en-grammar-options" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;"></div>
+
+                        <div id="lang-en-explanation-box" class="hidden explanation-box">
+                            <h4 style="margin-bottom: 10px;">💡 Explanation</h4>
+                            <p id="lang-en-exp-fr" style="margin-bottom: 8px; font-weight: bold;"></p>
+                            <p id="lang-en-exp-ar" style="font-size: 1.1rem; color: #555; text-align: right;" dir="rtl"></p>
+                        </div>
+                        <button id="lang-en-btn-continue" class="btn btn-primary w-100 hidden" style="margin-top: 15px;">Continuer ➡️</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Session Results View -->
+            <section id="view-results" class="view">
+                <div class="text-center">
+                    <h2 style="font-size: 2.5rem; color: var(--primary-color);">Fin du temps ! ⏱️</h2>
+                    <p class="mb-3" style="color: var(--text-muted);">Voici tes résultats :</p>
+                    
+                    <div style="background: var(--bg-light); border: 2px solid var(--border-color); border-radius: var(--border-radius-lg); padding: 20px; margin-bottom: 20px;">
+                        <h3 id="res-rank" style="font-size: 2rem; margin-bottom: 10px; color: var(--accent-dark);">Rang</h3>
+                        <p id="res-message" style="font-weight: bold; margin-bottom: 20px;"></p>
+                        
+                        <div style="display: flex; justify-content: space-around; font-size: 1.2rem; margin-bottom: 10px;">
+                            <span style="color: var(--primary-color);">✅ <span id="res-correct">0</span></span>
+                            <span style="color: var(--danger-color);">❌ <span id="res-wrong">0</span></span>
+                        </div>
+                        <div style="font-size: 1.5rem; font-weight: 900; color: var(--secondary-color);">
+                            <span id="res-xp">0 XP</span>
+                        </div>
+                    </div>
+
+                    <div id="guest-promo-box" class="hidden" style="background: #fff8e1; border: 2px dashed var(--accent-color); padding: 15px; border-radius: var(--border-radius-md); margin-bottom: 20px;">
+                        <h4 style="color: var(--accent-dark); margin-bottom: 5px;">Ne perds pas ta progression !</h4>
+                        <p style="font-size: 0.9rem; margin-bottom: 10px;">Crée un compte pour sauvegarder ton rang et tes XP.</p>
+                        <button onclick="App.navigate('auth')" class="btn btn-secondary w-100">S'inscrire maintenant</button>
+                    </div>
+
+                    <button onclick="App.navigate('dashboard')" class="btn btn-primary w-100">Retour à l'accueil</button>
+                </div>
+            </section>
+
+            <!-- Science View -->
+            <section id="view-science" class="view">
+                <div class="text-center">
+                    <h2 class="mb-1" style="color: #009688;">Culture Générale 🌍</h2>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <span id="science-diff" class="diff-badge">BEGINNER</span>
+                        <span id="science-streak-text" style="font-size: 0.8rem; font-weight: bold; color: var(--text-muted);">0/5 vers le niveau suivant</span>
+                    </div>
+                    <p style="color: var(--text-muted); margin-bottom: 10px;">Question :</p>
+                    <div id="science-q" style="font-size: 1.5rem; font-weight: 800; margin-bottom: 20px; color: var(--text-main);">
+                        Question
+                    </div>
+                    <div id="science-options" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;"></div>
+                    
+                    <div id="science-explanation-box" class="hidden explanation-box">
+                        <h4 style="margin-bottom: 10px;">💡 Explication</h4>
+                        <p id="science-exp-fr" style="margin-bottom: 8px; font-weight: bold;"></p>
+                        <p id="science-exp-ar" style="font-size: 1.1rem; color: #555; text-align: right;" dir="rtl"></p>
+                    </div>
+                    <button id="science-btn-continue" class="btn btn-primary w-100 hidden" style="margin-top: 15px;">Continuer ➡️</button>
+                </div>
+            </section>
+
+            <!-- Coloring Zone View -->
+            <section id="view-coloring" class="view">
+                <div class="text-center">
+                    <h2 class="mb-1" style="color: #ff9800;">Zone Zen 🎨</h2>
+                    <p style="color: var(--text-muted); margin-bottom: 20px;">Choisis une couleur et détends-toi.</p>
+                    
+                    <div style="background: white; padding: 20px; border-radius: var(--border-radius-lg); box-shadow: var(--shadow-md);">
+                        <svg id="zen-svg" viewBox="0 0 200 200" width="100%" height="250px">
+                            <!-- Geometric Mandala / Lotus shape -->
+                            <path d="M100 20 Q120 70 180 100 Q120 130 100 180 Q80 130 20 100 Q80 70 100 20 Z" />
+                            <path d="M100 50 Q110 80 150 100 Q110 120 100 150 Q90 120 50 100 Q90 80 100 50 Z" />
+                            <circle cx="100" cy="100" r="20" />
+                        </svg>
+                    </div>
+                    
+                    <div id="color-palette"></div>
+                    
+                    <button onclick="App.navigate('dashboard')" class="btn btn-secondary w-100" style="margin-top: 20px;">Quitter la Zone Zen</button>
+                </div>
+            </section>
+
+            <!-- Settings View -->
+            <section id="view-settings" class="view">
+                <div class="text-center">
+                    <h2 class="mb-3" style="color: var(--text-main);">Paramètres ⚙️</h2>
+                    
+                    <div style="background: white; padding: 20px; border-radius: var(--border-radius-md); box-shadow: var(--shadow-sm); text-align: left;">
+                        <h4 class="mb-2">Mon Compte</h4>
+                        <p id="settings-email" class="mb-3" style="color: var(--text-muted);">Connecté en tant que : -</p>
+                        
+                        <button onclick="App.logout()" class="btn btn-secondary w-100 mb-2">Se déconnecter</button>
+                        <hr style="margin: 20px 0; border: none; border-top: 1px solid var(--border-color);">
+                        <h4 class="mb-2" style="color: var(--danger-color);">Zone de Danger</h4>
+                        <button onclick="App.resetProgress()" class="btn btn-danger w-100">Réinitialiser ma progression</button>
+                    </div>
+                    
+                    <button onclick="App.navigate('dashboard')" class="btn btn-primary w-100" style="margin-top: 20px;">Retour</button>
+                </div>
+            </section>
+
+            <!-- Leaderboard View -->
+            <section id="view-leaderboard" class="view">
+                <div class="text-center">
+                    <h2 class="mb-2" style="color: var(--accent-dark);">Classement 🏆</h2>
+                    <p class="mb-3" style="color: var(--text-muted);">Les meilleurs joueurs !</p>
+                    
+                    <div style="background: white; border-radius: var(--border-radius-md); border: 2px solid var(--border-color); overflow: hidden;">
+                        <div style="padding: 15px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; font-weight: bold; background: var(--bg-light);">
+                            <span>Rang</span>
+                            <span>Joueur</span>
+                            <span>XP</span>
+                        </div>
+                        <div style="padding: 15px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between;">
+                            <span style="color: #ffd700; font-weight: bold;">#1</span>
+                            <span>Youssef</span>
+                            <span>12,450</span>
+                        </div>
+                        <div style="padding: 15px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between;">
+                            <span style="color: #c0c0c0; font-weight: bold;">#2</span>
+                            <span>Amina</span>
+                            <span>9,320</span>
+                        </div>
+                        <div style="padding: 15px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between;">
+                            <span style="color: #cd7f32; font-weight: bold;">#3</span>
+                            <span>Toi</span>
+                            <span id="lb-your-xp">0</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <nav id="bottom-nav" class="hidden">
+            <button class="nav-btn active" data-target="dashboard">
+                <span class="icon">🏠</span>
+                <span class="label">Accueil</span>
+            </button>
+            <button class="nav-btn" data-target="math">
+                <span class="icon">🧮</span>
+                <span class="label">Maths</span>
+            </button>
+            <button class="nav-btn" data-target="french">
+                <span class="icon">🥖</span>
+                <span class="label">Français</span>
+            </button>
+            <button class="nav-btn" data-target="english">
+                <span class="icon">🗽</span>
+                <span class="label">English</span>
+            </button>
+            <button class="nav-btn" data-target="science">
+                <span class="icon">🌍</span>
+                <span class="label">Culture</span>
+            </button>
+            <button class="nav-btn" data-target="coloring">
+                <span class="icon">🎨</span>
+                <span class="label">Zen</span>
+            </button>
+            <button class="nav-btn" data-target="leaderboard">
+                <span class="icon">🏆</span>
+                <span class="label">Classement</span>
+            </button>
+        </nav>
+        
+        <div id="toast-container"></div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="data/words-fr.js"></script>
+    <script src="data/words-en.js"></script>
+    <script src="data/grammar-fr.js"></script>
+    <script src="data/grammar-en.js"></script>
+    <script src="data/science-fr.js"></script>
+    <script src="js/services/firebase.js"></script>
+    <script src="js/engine/funny-system.js"></script>
+    <script src="js/engine/gamification.js"></script>
+    <script src="js/engine/session-manager.js"></script>
+    <script src="js/modules/math-arena.js"></script>
+    <script src="js/modules/language-academy.js"></script>
+    <script src="js/modules/grammar-academy.js"></script>
+    <script src="js/modules/science.js"></script>
+    <script src="js/modules/coloring.js"></script>
+    <script src="js/views/auth-view.js"></script>
+    <script src="js/views/dashboard.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

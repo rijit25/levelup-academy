@@ -1,0 +1,44 @@
+:root {
+    /* Color Palette - Duolingo Inspired */
+    --primary-color: #58cc02;      /* Green */
+    --primary-dark: #58a700;
+    --secondary-color: #1cb0f6;    /* Blue */
+    --secondary-dark: #1899d6;
+    --accent-color: #ffc800;       /* Yellow/Gold */
+    --accent-dark: #e5b400;
+    --danger-color: #ff4b4b;       /* Red */
+    --danger-dark: #ea2b2b;
+    
+    /* Grays & Backgrounds */
+    --bg-color: #ffffff;
+    --bg-light: #f7f7f7;
+    --text-main: #4b4b4b;
+    --text-muted: #afafaf;
+    --border-color: #e5e5e5;
+    
+    /* Typography */
+    --font-main: 'Nunito', sans-serif;
+    
+    /* UI Elements */
+    --border-radius-sm: 8px;
+    --border-radius-md: 16px;
+    --border-radius-lg: 24px;
+    
+    --shadow-sm: 0 2px 0 rgba(0,0,0,0.1);
+    --shadow-md: 0 4px 0 rgba(0,0,0,0.1);
+    
+    /* Transitions */
+    --transition-fast: 0.15s ease;
+    --transition-medium: 0.3s ease;
+}
+
+/* Dark mode support - basic */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-color: #131f24;
+        --bg-light: #202f36;
+        --text-main: #ffffff;
+        --text-muted: #77858f;
+        --border-color: #37464f;
+    }
+}

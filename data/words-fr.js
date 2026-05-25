@@ -1,0 +1,22 @@
+window.wordsFr = [
+    { word: "L'école", translation: "School", category: "school" },
+    { word: "Le professeur", translation: "Teacher", category: "school" },
+    { word: "Le livre", translation: "Book", category: "school" },
+    { word: "Le cahier", translation: "Notebook", category: "school" },
+    { word: "Le stylo", translation: "Pen", category: "school" },
+    { word: "Le tableau", translation: "Board", category: "school" },
+    { word: "Manger", translation: "To eat", category: "verbs" },
+    { word: "Boire", translation: "To drink", category: "verbs" },
+    { word: "Parler", translation: "To speak", category: "verbs" },
+    { word: "Écouter", translation: "To listen", category: "verbs" },
+    { word: "Comprendre", translation: "To understand", category: "verbs" },
+    { word: "La famille", translation: "Family", category: "family" },
+    { word: "La mère", translation: "Mother", category: "family" },
+    { word: "Le père", translation: "Father", category: "family" },
+    { word: "Le frère", translation: "Brother", category: "family" },
+    { word: "La soeur", translation: "Sister", category: "family" },
+    { word: "Heureux", translation: "Happy", category: "emotions" },
+    { word: "Triste", translation: "Sad", category: "emotions" },
+    { word: "Fatigué", translation: "Tired", category: "emotions" },
+    { word: "En colère", translation: "Angry", category: "emotions" }
+];
